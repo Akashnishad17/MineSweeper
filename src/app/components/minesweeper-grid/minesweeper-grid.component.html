@@ -1,0 +1,9 @@
+<div class="grid">
+    <div *ngFor="let row of grid" class="row">
+        <div *ngFor="let cell of row" class="cell">
+            <div *ngIf="cell.isOpen && !cell.isBomb" [style.color]="cell.color">{{cell.neighboringbombCount}}</div>
+            <div *ngIf="cell.isOpen && cell.isBomb" class="bomb"></div>
+            <div *ngIf="!cell.isOpen" class="hidden-block" (click)="openCell(cell)"></div>     
+        </div>
+    </div>
+</div>

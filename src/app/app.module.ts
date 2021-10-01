@@ -3,10 +3,12 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { MinesweeperGridComponent } from './components/minesweeper-grid/minesweeper-grid.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MinesweeperGridComponent
   ],
   imports: [
     BrowserModule,
