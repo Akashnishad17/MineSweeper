@@ -1,16 +1,17 @@
 .grid{
-    height: 540px;
+    height: 536px;
     width: 540px;
     border-width: 4px;
     border-color: black;
     border-style: solid;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 40px;
     background-color: lightgrey;
+    padding-top: 4px;
 }
-.row{
-    display: inline-block;
+.row{  
+    display: inline-flex;
+    height: 54px;
 }
 .cell{
     height: 50px;
@@ -22,13 +23,18 @@
     font-weight: 900;
     font-size: 250%;
     cursor: pointer;
+    margin-top: -4px;
+    font-family: sans-serif;
+    display: table-cell;
+    vertical-align: middle;
 }
 .bomb{
     width: 40px;
     height: 40px;
     background-color: black;
     border-radius: 20px;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 5px;
 }
 .hidden-block{

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { BombCell, Cell, Color } from 'src/app/models/cell-model';
+import { MinesweeperDataSharingService } from 'src/app/services/minesweeper-data-sharing.service';
 
 @Component({
   selector: 'app-minesweeper-grid',
@@ -11,8 +13,29 @@ export class MinesweeperGridComponent implements OnInit {
   num = 10;
   grid: Cell[][] = [];
   bombs: BombCell[] = [];
+  dir = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+  started = false;
+  opened = 0;
+  subscription: Subscription
 
-  constructor() { 
+  constructor(private minesweeperDataSharingService: MinesweeperDataSharingService) {
+    this.subscription = new Subscription();
+  }
+
+  ngOnInit(): void {
+    this.initializeGrid();
+
+    this.subscription.add(this.minesweeperDataSharingService.getStartGame().subscribe(res=>{
+      if(res)
+      {
+        this.started = true;
+        this.initializeGrid();
+        this.startGame();
+      }
+    }));
+  }
+
+  initializeGrid(){
     this.grid = [];
 
     for(var i = 0; i < this.num; i++){
@@ -24,7 +47,8 @@ export class MinesweeperGridComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  startGame(){
+    this.opened = 0;
     this.bombs = [];
 
     for(var i = 0; i < this.num; i++){
@@ -116,6 +140,85 @@ export class MinesweeperGridComponent implements OnInit {
   }
 
   openCell(cell: Cell){
-    cell.isOpen = true;
+    if(!this.started)
+      return;
+
+    if(cell.isBomb)
+    {
+      this.openBombCells();
+      this.endGame();
+      return;
+    }
+
+    if(cell.neighboringbombCount != undefined && cell.neighboringbombCount > 0)
+    {
+      cell.isOpen = true;
+      this.opened = this.opened + 1;
+      this.checkWin();
+      return;
+    }
+
+    var queue: BombCell[] = [];
+
+    if(cell && cell.x != undefined && cell.y != undefined)
+      queue.push(new BombCell(cell.x, cell.y));
+
+    while(queue.length > 0)
+    {
+      var current: BombCell = queue[0];
+      queue.splice(0, 1);
+
+      if(!this.grid[current.x][current.y].isOpen)
+      {
+        this.grid[current.x][current.y].isOpen = true;
+        this.opened = this.opened + 1;
+      }
+
+      this.dir.forEach(element=>{
+        var x: number = element[0] + current.x;
+        var y: number = element[1] + current.y;
+
+        if(this.validCordinate(x, y))
+        {
+            var next = this.grid[x][y];
+            
+            if(!next.isBomb && !next.isOpen)
+            {
+              if(next.neighboringbombCount != undefined && next.neighboringbombCount > 0)
+              {
+                next.isOpen = true;
+                this.opened = this.opened + 1;
+              }
+              else if(next.x != undefined && next.y != undefined)
+                queue.push(new BombCell(next.x, next.y));
+            }
+        }
+      });
+    }
+
+    this.checkWin();
+  }
+
+  openBombCells()
+  {
+    this.bombs.forEach(element=>{
+      this.grid[element.x][element.y].isOpen = true;
+    });
+  }
+
+  endGame(){
+    this.started = false;
+    this.minesweeperDataSharingService.setEndGame(true);
+  }
+
+  checkWin(){
+    if(this.num * this.num - this.num == this.opened){
+      this.openBombCells();
+      this.endGame();
+    }
+  }
+
+  ngOnDestroy(){
+    this.subscription.unsubscribe();
   }
 }

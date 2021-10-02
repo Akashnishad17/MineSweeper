@@ -4,11 +4,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MinesweeperGridComponent } from './components/minesweeper-grid/minesweeper-grid.component';
+import { MinesweeperPanelComponent } from './components/minesweeper-panel/minesweeper-panel.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MinesweeperGridComponent
+    MinesweeperGridComponent,
+    MinesweeperPanelComponent
   ],
   imports: [
     BrowserModule,

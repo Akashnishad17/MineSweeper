@@ -1,0 +1,9 @@
+<div class="panel">
+    <div class="start-game" (click)="startGame()">
+        <div *ngIf="!started">Start</div>
+        <div *ngIf="started">Restart</div>
+    </div>
+    <div class="timer">
+        {{time}}
+    </div>
+</div>
